@@ -1,0 +1,469 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--        <template id="report_style_inherit" inherit_id="web.report_assets_common">-->
+        <!--            <xpath expr="." position="inside">-->
+        <!--                <link href="/einv_sa/static/css/report_style.css" rel="stylesheet" type="text/css"/>-->
+        <!--                <script type="text/javascript" src="/einv_sa/static/src/js/qrcode.js"></script>-->
+        <!--            </xpath>-->
+        <!--        </template>-->
+
+
+        <!--         report action  -->
+        <record id="action_tax_invoice_report" model="ir.actions.report">
+            <field name="name">Tax Invoice - فاتورة ضريبية</field>
+            <field name="model">account.move</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">einv_sa.account_move_report</field>
+            <field name="report_file">einv_sa.account_move_report</field>
+            <field name="print_report_name">'Invoice - %s' % (object.name).replace('/', '')</field>
+            <field name="binding_model_id" ref="model_account_move"/>
+            <field name="binding_type">report</field>
+        </record>
+
+        <!--        <report id="einv_tax_invoice"  model="account.move" string="Tax Invoic - فاتورة ضريبية"-->
+        <!--            name="einv_sa.account_move_report"-->
+        <!--            report_type="qweb-html"-->
+        <!--            print_report_name="'Invoice - %s' % (object.name).replace('/', '')"-->
+        <!--        />-->
+
+        <template id="einv_sa.inv_header">
+            <div class="row p-1 my-2 border-bottom bg-light" style="margin-top:-55px">
+                <div class="col-12 text-center" style="font-size:1.2rem;">
+                    <Strong>Tax Invoice فاتورة ضريبية</Strong>
+                    <span t-if="doc.move_type=='out_refund'">- Credit Note إشعار دائن</span>
+                    <span t-if="doc.move_type=='in_refund'">- Debit Note إشعار مدين</span>
+                </div>
+            </div>
+            <div class="row my-1">
+                <div class="col-9">
+                    <div class="row">
+                        <div class="col-4">
+                            <Strong>Invoice Number</Strong>
+                        </div>
+                        <div class="col-4 text-center">
+                            <span t-field="doc.name"></span>
+                        </div>
+                        <div class="col-4 text-right">
+                            <Strong>رقم الفاتورة</Strong>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">
+                            <Strong>Invoice Date</Strong>
+                        </div>
+                        <div class="col-4 text-center">
+                            <span t-field="doc.invoice_date"></span>
+                        </div>
+                        <div class="col-4 text-right">
+                            <Strong>تاريخ الفاتورة</Strong>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">
+                            <Strong>Due Date</Strong>
+                        </div>
+                        <div class="col-4 text-center">
+                            <span t-field="doc.invoice_date_due"></span>
+                        </div>
+                        <div class="col-4 text-right">
+                            <Strong>تاريخ السداد</Strong>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">
+                            <Strong>Delivery Note No.</Strong>
+                        </div>
+                        <div class="col-4 text-center">
+                            <span t-field="doc.x_delivery_note_no"></span>
+                        </div>
+                        <div class="col-4 text-right">
+                            <Strong>رقم اذن التوريد</Strong>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">
+                            <Strong>Customer P.O.</Strong>
+                        </div>
+                        <div class="col-4 text-center">
+                            <span t-field="doc.x_customer_po"></span>
+                        </div>
+                        <div class="col-4 text-right">
+                            <Strong>رقم أمر الشراء</Strong>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-3">
+
+                    <img t-att-src="'/report/barcode/?type=%s&amp;width=%s&amp;height=%s&amp;value=Seller : %s;Vat_Number : %s;date : %s;Total_Vat : %s;Total_Amount : %s'%('QR', 130, 130,doc.company_id.name,doc.company_id.vat,doc.invoice_date,doc.amount_tax_signed,doc.amount_total)"
+                         class="float-right my-1"/>
+
+                </div>
+            </div>
+            <div class="oe_structure"/>
+        </template>
+
+        <template id="einv_sa.partner_info">
+            <div class="row p-1 mt-1  bg-light">
+                <div class="col-6">
+                    <Strong>Buyer</Strong>
+                </div>
+                <div class="col-6 text-right">
+                    <Strong>العميل</Strong>
+                </div>
+            </div>
+            <div class="px-2">
+                <div class="row">
+                    <div class="col-3">
+                        <Strong>Name</Strong>
+                    </div>
+                    <div class="col-5 text-center">
+                        <span t-field="doc.partner_id.name"></span>
+                    </div>
+                    <div class="col-4 text-right">
+                        <Strong>الاسم</Strong>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-3">
+                        <Strong>Building No</Strong>
+                    </div>
+                    <div class="col-5 text-center">
+                        <span t-field="doc.partner_id.building_no"></span>
+                    </div>
+                    <div class="col-4 text-right">
+                        <Strong>رقم المبني</Strong>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-3">
+                        <Strong>Street</Strong>
+                    </div>
+                    <div class="col-5 text-center">
+                        <span t-field="doc.partner_id.street"></span>
+                    </div>
+                    <div class="col-4 text-right">
+                        <Strong>اسم الشارع</Strong>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-3">
+                        <Strong>District</Strong>
+                    </div>
+                    <div class="col-5 text-center">
+                        <span t-field="doc.partner_id.district"></span>
+                    </div>
+                    <div class="col-4 text-right">
+                        <Strong>الحي</Strong>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-3">
+                        <Strong>City</Strong>
+                    </div>
+                    <div class="col-5 text-center">
+                        <span t-field="doc.partner_id.city"></span>
+                    </div>
+                    <div class="col-4 text-right">
+                        <Strong>المدينة</Strong>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-3">
+                        <Strong>Country</Strong>
+                    </div>
+                    <div class="col-5 text-center">
+                        <span t-field="doc.partner_id.country_id.name"></span>
+                    </div>
+                    <div class="col-4 text-right">
+                        <Strong>البلد</Strong>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-3">
+                        <Strong>Postal Code</Strong>
+                    </div>
+                    <div class="col-5 text-center">
+                        <span t-field="doc.partner_id.zip"></span>
+                    </div>
+                    <div class="col-4 text-right">
+                        <Strong>الرمز البريدي</Strong>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-3">
+                        <Strong>VAT Number</Strong>
+                    </div>
+                    <div class="col-5 text-center">
+                        <span t-field="doc.partner_id.vat"></span>
+                    </div>
+                    <div class="col-4 text-right">
+                        <Strong>رقم التسجيل الضريبى</Strong>
+                    </div>
+
+                </div>
+                <!--                <div class="row">-->
+                <!--                    <div class="col-3"><Strong>Other ID</Strong></div>-->
+                <!--                    <div class="col-5 text-center"><span t-field="doc.partner_id.other_id"></span></div>-->
+                <!--                    <div class="col-4 text-right"><Strong>معرف آخر</Strong></div>-->
+                <!--                </div>-->
+                <div class="oe_structure"/>
+            </div>
+            <div class="oe_structure"/>
+        </template>
+
+        <template id="einv_sa.inv_lines">
+            <div class="row p-1 mt-3 bg-light">
+                <div class="col-6">
+                    <Strong>Invoice Lines</Strong>
+                </div>
+                <div class="col-6 text-right">
+                    <Strong>الاصناف</Strong>
+                </div>
+            </div>
+            <table class="table table-sm " name="invoice_line_ids_table">
+                <thead class="bg-light text-center">
+                    <tr>
+                        <td class="text-center " style="border:1px solid black;">
+                            <div class="mw-100">Description</div>
+                            <div class="mw-100 ">
+                                الوصف
+                            </div>
+                        </td>
+
+
+                        <td style="border:1px solid black;">
+                            <div class="mw-100">UOM</div>
+                            <div class="mw-100 ">وحدة القياس</div>
+                        </td>
+                        <td style="border:1px solid black;">
+                            <div class="mw-100">Quantity</div>
+                            <div class="mw-100 ">الكمية</div>
+                        </td>
+                        <td style="border:1px solid black;">
+                            <div class="mw-100">Total Weight</div>
+                            <div class="mw-100 ">أجمالى الوزن</div>
+                        </td>
+                        <td style="border:1px solid black;">
+                            <div class="mw-100">Unit Price Kg</div>
+                            <div class="mw-100 ">سعر الوحدة كغ</div>
+                        </td>
+                        <!--                        <td style="border:1px solid black;">-->
+                        <!--                            <div class="mw-100">Discount</div>-->
+                        <!--                            <div class="mw-100 ">الخصم</div>-->
+                        <!--                        </td>-->
+                        <!--                        <td style="border:1px solid black;">-->
+                        <!--                            <div class="mw-100">Taxes</div>-->
+                        <!--                            <div class="mw-100 ">نسبة الضريبة</div>-->
+                        <!--                        </td>-->
+                        <!--                        <td style="border:1px solid black;">-->
+                        <!--                            <div class="mw-100">Amount TAX</div>-->
+                        <!--                            <div class="mw-100 ">مبلغ الضريبة</div>-->
+                        <!--                        </td>-->
+                        <td style="border:1px solid black;">
+                            <div class="mw-100">Taxable Amount</div>
+                            <div class="mw-100 ">المبلغ الخاضع
+                                للضريبة
+                            </div>
+                        </td>
+                        <!--                        <td style="border:1px solid black;">-->
+                        <!--                            <div class="mw-100">Price Total (with VAT)</div>-->
+                        <!--                            <div class="mw-100 ">الاجمالي شامل-->
+                        <!--                                الضريبة المضافة-->
+                        <!--                            </div>-->
+                        <!--                        </td>-->
+
+                    </tr>
+                </thead>
+                <tbody class="invoice_line_ids_tbody text-center">
+                    <!-- foreach-->
+                    <tr t-foreach="doc.invoice_line_ids" t-as="line">
+                        <td class="text-left" style="border:1px solid black;">
+                            <span t-field="line.name"/>
+                        </td>
+
+                        <td style="border:1px solid black;">
+                            <span t-field="line.product_uom_id.name"/>
+                        </td>
+                        <td style="border:1px solid black;">
+                            <span t-field="line.quantity"/>
+                        </td>
+                        <td style="border:1px solid black;">
+                            <span t-esc="line.quantity * line.product_uom_id.x_kgexch"/>
+                        </td>
+                        <td style="border:1px solid black;">
+                            <span t-esc="line.price_unit / line.product_uom_id.x_kgexch"/>
+                        </td>
+                        <!--                        <td style="border:1px solid black;">-->
+                        <!--                            <span t-field="line.einv_amount_discount"/>-->
+                        <!--                        </td>-->
+                        <!--                            <td><span t-field="line.tax_ids[0].name"/></td>-->
+                        <!--                        <td style="border:1px solid black;" t-attf-class="{{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">-->
+                        <!--                            <span t-esc="', '.join(map(lambda x: (x.description or x.name), line.tax_ids))"-->
+                        <!--                                  id="line_tax_ids"/>-->
+                        <!--                        </td>-->
+                        <!--                        <td style="border:1px solid black;">-->
+                        <!--                            <span t-field="line.einv_amount_tax"/>-->
+                        <!--                        </td>-->
+                        <td style="border:1px solid black;">
+                            <span t-field="line.price_subtotal"/>
+                        </td>
+                        <!--                        <td style="border:1px solid black;">-->
+                        <!--                            <span t-field="line.price_total"/>-->
+                        <!--                        </td>-->
+
+                    </tr>
+                </tbody>
+            </table>
+            <div class="oe_structure"/>
+        </template>
+
+
+        <template id="einv_sa.inv_total">
+            <div class="row p-1 mt-3 bg-light">
+                <div class="col-6">
+                    <Strong>Total Amount:</Strong>
+                </div>
+                <div class="col-6 text-right">
+                    <Strong>:الاجمالي</Strong>
+                </div>
+            </div>
+
+            <table class="table table-sm " name="totals_table">
+                <thead class="bg-light text-center">
+                    <tr>
+                        <td class="text-left " style="border:1px solid black;">
+                            <div class="mw-100">Total (Excluding VAT)</div>
+                        </td>
+
+                        <td class="text-right " style="border:1px solid black;">
+                            <div>الاجمالي غير شامل ضريبة القيمة
+                                المضافة
+                            </div>
+                        </td>
+                        <td class="text-center " style="border:1px solid black;">
+                            <div class="mw-100"><span t-field="doc.einv_amount_sale_total"/></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-left " style="border:1px solid black;">
+                            <div class="mw-100">Discount</div>
+                        </td>
+
+                        <td class="text-right " style="border:1px solid black;">
+                            <div>إجمالي الخصومات
+                            </div>
+                        </td>
+                        <td class="text-center " style="border:1px solid black;">
+                            <div class="mw-100"><span t-field="doc.einv_amount_discount_total"/></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-left " style="border:1px solid black;">
+                            <div class="mw-100">Total Taxable Amount (Excluding VAT)</div>
+                        </td>
+
+                        <td class="text-right " style="border:1px solid black;">
+                            <div>الإجمالي الخاضع للضريبة
+                            </div>
+                        </td>
+                        <td class="text-center " style="border:1px solid black;">
+                            <div class="mw-100"><span t-field="doc.amount_untaxed"/></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-left " style="border:1px solid black;">
+                            <div class="mw-100">Total VAT</div>
+                        </td>
+
+                        <td class="text-right " style="border:1px solid black;">
+                            <div>إجمالي الضريبة المضافة
+                            </div>
+                        </td>
+                        <td class="text-center " style="border:1px solid black;">
+                            <div class="mw-100"><span t-field="doc.amount_tax_signed"/></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-left " style="border:1px solid black;">
+                            <div class="mw-100">Total Amount Due</div>
+                        </td>
+
+                        <td class="text-right " style="border:1px solid black;">
+                            <div>الإجمالي المستحق
+                            </div>
+                        </td>
+                        <td class="text-center " style="border:1px solid black;">
+                            <div class="mw-100"><span t-field="doc.amount_total"/></div>
+                        </td>
+                    </tr>
+                </thead>
+            </table>
+
+            <div class="oe_structure"/>
+
+        </template>
+
+        <!-- main document template -->
+        <template id="einv_sa.account_move_report_document">
+            <t t-debug=""></t>
+            <t t-call="web.external_layout">
+                <t t-set="doc" t-value="doc.with_context({'lang': lang})"/>
+                <div class="page">
+                    <style>
+                        html *
+                        {
+                        font-size: 12;
+                        font-family: Times and Roman;
+                        }
+                    </style>
+
+                    <!-- Invoice fields-->
+                    <t t-call="einv_sa.inv_header"/>
+
+                    <!-- partner fields-->
+                    <t t-call="einv_sa.partner_info"/>
+
+                    <!-- Invoice fields-->
+                    <t t-call="einv_sa.inv_lines" t-lang="ar"/>
+
+                    <!-- Invoice total-->
+                    <t t-call="einv_sa.inv_total"/>
+                    <div class="row" style="padding-top:20px">
+                        <div class="col-12 text-left">
+                            <Strong>Total Amount</Strong>
+                            <Strong>(</Strong>
+                            <strong t-esc="doc.currency_id.amount_to_text(doc.amount_total)"/>
+                            <Strong>)</Strong>
+                        </div>
+                    </div>
+                    <div class="row" style="padding-top:10px">
+                        <div class="col-12 text-left">
+                            **This Invoice is Electronic Generated and does not Require the Company's Signature or Stamp
+                        </div>
+                    </div>
+                    <div class="row" style="padding-top:1px">
+                        <div class="col-12 text-right">
+                            هذه فاتورة الكترونية لا تحتاج إلى توقيع او ختم الشركة
+                        </div>
+                    </div>
+                </div>
+
+            </t>
+        </template>
+
+        <!-- main template -->
+        <template id="einv_sa.account_move_report">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <t t-set="lang" t-value="doc.create_uid.lang"/>
+                    <t t-call="einv_sa.account_move_report_document"/>
+                </t>
+
+
+            </t>
+        </template>
+
+
+    </data>
+</odoo>

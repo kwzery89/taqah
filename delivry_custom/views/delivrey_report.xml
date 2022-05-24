@@ -1,0 +1,152 @@
+<odoo>
+    <data>
+        <template id="qty_uom_picking" inherit_id="stock.report_delivery_document">
+            <xpath
+                    expr="//table[@name='stock_move_table']" position="replace">
+                <table class="table table-sm" t-if="o.state!='done'" name="stock_move_table">
+                    <thead>
+                        <tr>
+                            <th name="th_sm_product">
+                                <strong>Product</strong>
+                            </th>
+                            <th name="th_sm_quantity" class="text-center">
+                                <strong>Quantity</strong>
+                            </th>
+                            <th name="th_sm_uom" class="text-center">
+                                <strong>Uom</strong>
+                            </th>
+                            <th name="th_sm_total" class="text-center">
+                                <strong>Total Weight</strong>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-set="lines" t-value="o.move_lines.filtered(lambda x: x.product_uom_qty)"/>
+                        <tr t-foreach="lines" t-as="move">
+                            <td>
+                                <span t-field="move.product_id"/>
+                                <p t-if="move.description_picking != move.product_id.name">
+                                    <span t-field="move.description_picking"/>
+                                </p>
+                            </td>
+                            <td class="text-center">
+                                <span t-esc="move.quantity_done / move.sales_uom_id.x_kgexch"/>
+                            </td>
+                            <td class="text-center">
+                                <span t-field="move.sales_uom_id"/>
+                            </td>
+                            <td class="text-center">
+                                <span t-field="move.quantity_done"/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </xpath>
+            <xpath expr="//table[@name='stock_move_line_table']" position="replace">
+                <table class="table table-sm mt48" t-if="o.move_line_ids and o.state=='done'"
+                       name="stock_move_line_table">
+                    <t t-set="has_serial_number" t-value="False"/>
+                    <t t-set="has_serial_number" t-value="o.move_line_ids.mapped('lot_id')"
+                       groups="stock.group_lot_on_delivery_slip"/>
+                    <thead>
+                        <tr>
+                            <th name="th_sml_product">
+                                <strong>Product</strong>
+                            </th>
+                            <th name="th_sml_quantity" class="text-center">
+                                <strong>Quantity</strong>
+                            </th>
+                            <th name="th_sm_uom" class="text-center">
+                                <strong>Uom</strong>
+                            </th>
+                            <th name="th_sm_total" class="text-center">
+                                <strong>Total Weight</strong>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-set="lines" t-value="o.move_lines.filtered(lambda x: x.product_uom_qty)"/>
+                        <tr t-foreach="lines" t-as="move">
+                            <td>
+                                <span t-field="move.product_id"/>
+                                <p t-if="move.description_picking != move.product_id.name">
+                                    <span t-field="move.description_picking"/>
+                                </p>
+                            </td>
+                            <td class="text-center">
+                                <span t-esc="move.quantity_done / move.sales_uom_id.x_kgexch"/>
+                            </td>
+                            <td class="text-center">
+                                <span t-field="move.sales_uom_id"/>
+                            </td>
+                            <td class="text-center">
+                                <span t-field="move.quantity_done"/>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <!--                    <tbody>-->
+                    <!--                        &lt;!&ndash; This part gets complicated with different use cases (additional use cases in extensions of this report):-->
+                    <!--                                1. If serial numbers are used and set to print on delivery slip => print lines as is, otherwise group them by overlapping-->
+                    <!--                                    product + description + uom combinations-->
+                    <!--                                2. If any packages are assigned => split products up by package (or non-package) and then apply use case 1 &ndash;&gt;-->
+                    <!--                        &lt;!&ndash; If has destination packages => create sections of corresponding products &ndash;&gt;-->
+                    <!--                        <t t-if="o.has_packages" name="has_packages">-->
+                    <!--                            <t t-set="packages" t-value="o.move_line_ids.mapped('result_package_id')"/>-->
+                    <!--                            <t t-foreach="packages" t-as="package">-->
+                    <!--                                <t t-call="stock.stock_report_delivery_package_section_line"/>-->
+                    <!--                                <t t-set="package_move_lines"-->
+                    <!--                                   t-value="o.move_line_ids.filtered(lambda l: l.result_package_id == package)"/>-->
+                    <!--                                &lt;!&ndash; If printing lots/serial numbers => keep products in original lines &ndash;&gt;-->
+                    <!--                                <t t-if="has_serial_number">-->
+                    <!--                                    <tr t-foreach="package_move_lines" t-as="move_line">-->
+                    <!--                                        <t t-call="stock.stock_report_delivery_has_serial_move_line"/>-->
+                    <!--                                    </tr>-->
+                    <!--                                </t>-->
+                    <!--                                &lt;!&ndash; If not printing lots/serial numbers => merge lines with same product+description+uom &ndash;&gt;-->
+                    <!--                                <t t-else="">-->
+                    <!--                                    <t t-set="aggregated_lines"-->
+                    <!--                                       t-value="package_move_lines._get_aggregated_product_quantities()"/>-->
+                    <!--                                    <t t-call="stock.stock_report_delivery_aggregated_move_lines"/>-->
+                    <!--                                </t>-->
+                    <!--                            </t>-->
+                    <!--                            &lt;!&ndash; Make sure we do another section for package-less products if they exist &ndash;&gt;-->
+                    <!--                            <t t-set="move_lines"-->
+                    <!--                               t-value="o.move_line_ids.filtered(lambda l: not l.result_package_id)"/>-->
+                    <!--                            <t t-if="move_lines" name="no_package_move_lines">-->
+                    <!--                                <t t-call="stock.stock_report_delivery_no_package_section_line"-->
+                    <!--                                   name="no_package_section"/>-->
+                    <!--                                <t t-if="has_serial_number">-->
+                    <!--                                    <tr t-foreach="move_lines" t-as="move_line">-->
+                    <!--                                        <t t-call="stock.stock_report_delivery_has_serial_move_line"/>-->
+                    <!--                                    </tr>-->
+                    <!--                                </t>-->
+                    <!--                                <t t-else="">-->
+                    <!--                                    <t t-set="aggregated_lines"-->
+                    <!--                                       t-value="move_lines._get_aggregated_product_quantities()"/>-->
+                    <!--                                    <t t-if="aggregated_lines">-->
+                    <!--                                        <t t-call="stock.stock_report_delivery_aggregated_move_lines"/>-->
+                    <!--                                    </t>-->
+                    <!--                                </t>-->
+                    <!--                            </t>-->
+                    <!--                        </t>-->
+                    <!--                        &lt;!&ndash; No destination packages &ndash;&gt;-->
+                    <!--                        <t t-else="">-->
+                    <!--                            &lt;!&ndash; If printing lots/serial numbers => keep products in original lines &ndash;&gt;-->
+                    <!--                            <t t-if="has_serial_number">-->
+                    <!--                                <tr t-foreach="o.move_line_ids" t-as="move_line">-->
+                    <!--                                    <t t-call="stock.stock_report_delivery_has_serial_move_line"/>-->
+                    <!--                                </tr>-->
+                    <!--                            </t>-->
+                    <!--                            &lt;!&ndash; If not printing lots/serial numbers => merge lines with same product &ndash;&gt;-->
+                    <!--                            <t t-else="" name="aggregated_move_lines">-->
+                    <!--                                <t t-set="aggregated_lines"-->
+                    <!--                                   t-value="o.move_line_ids._get_aggregated_product_quantities()"/>-->
+                    <!--                                <t t-call="stock.stock_report_delivery_aggregated_move_lines"/>-->
+                    <!--                            </t>-->
+                    <!--                        </t>-->
+                    <!--                    </tbody>-->
+                </table>
+            </xpath>
+        </template>
+    </data>
+</odoo>
