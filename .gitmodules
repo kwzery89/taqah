@@ -1,0 +1,4 @@
+[submodule "addons/azk_theme_customization"]
+	path = addons/azk_theme_customization
+	url = git@git.azka.tech:Azkatech/azk_theme_customization.git
+	branch = 14.0
