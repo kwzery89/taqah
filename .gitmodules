@@ -2,3 +2,6 @@
 	path = addons/azk_theme_customization
 	url = git@git.azka.tech:Azkatech/azk_theme_customization.git
 	branch = 14.0
+[submodule "addons/ks_dashboard_ninja"]
+	path = addons/ks_dashboard_ninja
+	url = git@git.azka.tech:Odoo3rdParties/ks_dashboard_ninja.git
