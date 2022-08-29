@@ -5,3 +5,7 @@
 [submodule "addons/ks_dashboard_ninja"]
 	path = addons/ks_dashboard_ninja
 	url = git@git.azka.tech:Odoo3rdParties/ks_dashboard_ninja.git
+[submodule "addons/az_financial_report_percentage"]
+	path = addons/az_financial_report_percentage
+	url = git@git.azka.tech:Azkatech/az_financial_report_percentage.git
+	branch = 14.0
