@@ -34,7 +34,7 @@ class PickingCustomer(models.Model):
         for rec in self:
             sale_obj = self.env['sale.order'].search([('name', '=', rec.origin)],limit=1)
             if sale_obj:
-                rec.x_customer_po = sale_obj.x_customer_po
+                rec.sudo().x_customer_po = sale_obj.x_customer_po
             else:
-                rec.x_customer_po = False
+                rec.sudo().x_customer_po = False
 
