@@ -4,7 +4,7 @@
     "name": "e-Invoice KSA | tax invoice | report | qrcode | ZATCA | vat  | electronic | einvoice | e-invoice sa | accounting | tax  | Zakat, Tax and Customs Authority | invoice ",
     "version": "1.2",
     "depends": [
-        'base', 'sale', 'account',
+        'base', 'web', 'account', 'l10n_sa'
     ],
     "author": "Genius Valley",
     "category": "Accounting",
@@ -24,28 +24,26 @@
     المرحلة الاولي -  مرحلة الاصدار 
     هيئة الزكاة والضريبة والجمارك
 
-    Issues --------------------------------
-        If QR code not appear v13 upgrade reportlab or use next command
-                >>  pip uninstall reportlab
-                >>  pip install reportlab
-                
     Versions History --------------------
     
-    * version 1.2 : 10-Oct-2021
-        Initial version compatible with odoo 13, tax invoice report, QR code
-   
+     * version 1.2: 10-Oct-2021
+         - Initial version compatible with odoo v15 , tax invoice report, QR code
 
     
     """
     ,
     "data": [
-
         "view/partner.xml",
         "report/base_document_layout.xml",
         "report/account_move.xml",
 
     ],
     "installable": True,
-    "auto_install": True,
+    "auto_install": False,
     "application": True,
+    'assets': {
+        'web.report_assets_common': [
+            'einv_sa/static/css/report_style.css',
+        ],
+    },
 }

@@ -1,11 +1,12 @@
 [submodule "addons/azk_theme_customization"]
 	path = addons/azk_theme_customization
 	url = git@git.azka.tech:Azkatech/azk_theme_customization.git
-	branch = 14.0
+	branch = 16.0
 [submodule "addons/ks_dashboard_ninja"]
 	path = addons/ks_dashboard_ninja
 	url = git@git.azka.tech:Odoo3rdParties/ks_dashboard_ninja.git
+	branch = 16.0
 [submodule "addons/az_financial_report_percentage"]
 	path = addons/az_financial_report_percentage
 	url = git@git.azka.tech:Azkatech/az_financial_report_percentage.git
-	branch = 14.0
+	branch = 16.0

@@ -24,6 +24,16 @@ class NewModule(models.Model):
                 rec.sales_qty = False
                 rec.sales_uom_id = False
 
+class UomUom(models.Model):
+    _inherit = 'uom.uom'
+
+    x_kgexch = fields.Integer(string="Kg Exchange", required=True, default=1)
+
+class SaleOrder(models.Model):
+    _inherit = 'sale.order'
+
+    x_customer_po = fields.Text(string="Customer P.O", required=False, )
+
 class PickingCustomer(models.Model):
     _inherit = 'stock.picking'
 
