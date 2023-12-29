@@ -30,7 +30,7 @@
                                 </p>
                             </td>
                             <td class="text-center">
-                                <span t-esc="move.quantity_done / move.sales_uom_id.x_kgexch"/>
+                                <span t-if="move.sales_uom_id.x_kgexch" t-esc="move.quantity_done / move.sales_uom_id.x_kgexch"/>
                             </td>
                             <td class="text-center">
                                 <span t-field="move.sales_uom_id"/>
@@ -74,7 +74,7 @@
                                 </p>
                             </td>
                             <td class="text-center">
-                                <span t-esc="move.quantity_done / move.sales_uom_id.x_kgexch"/>
+                                <span t-if="move.sales_uom_id.x_kgexch" t-esc="move.quantity_done / move.sales_uom_id.x_kgexch"/>
                             </td>
                             <td class="text-center">
                                 <span t-field="move.sales_uom_id"/>
