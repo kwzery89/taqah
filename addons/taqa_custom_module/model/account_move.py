@@ -25,8 +25,9 @@ class AccountMoveLine(models.Model):
         for rec in self:
             if rec.product_uom_id:
                 rec.price_unit = rec.price_per_unit * rec.product_uom_id.x_kgexch
-
-
+            else:
+                rec.price_unit = rec.price_per_unit
+    
 class SaleOrderPo(models.Model):
     _inherit = 'sale.order'
 
