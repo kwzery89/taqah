@@ -25,9 +25,8 @@ class AccountMoveLine(models.Model):
         for rec in self:
             if rec.product_uom_id:
                 rec.price_unit = rec.price_per_unit * rec.product_uom_id.x_kgexch
-            else:
-                rec.price_unit = rec.price_per_unit
-    
+
+
 class SaleOrderPo(models.Model):
     _inherit = 'sale.order'
 
@@ -43,8 +42,15 @@ class SaleOrderPerUnit(models.Model):
     _inherit = 'sale.order.line'
 
     price_per_unit = fields.Float(string="Price Per Unit", required=False, )
-    total_wieght = fields.Float(string="Total Weight", compute='_compute_amount')
+    total_wieght = fields.Float(string="Total Weight", compute='_compute_total_wieght')
 
+    @api.depends('product_uom_qty', 'discount', 'price_unit', 'price_per_unit', 'tax_id')
+    def _compute_total_wieght(self):
+        for line in self:
+            line.update({
+                'total_wieght': line.product_uom.x_kgexch * line.product_uom_qty,
+            })
+            
     @api.depends('product_uom_qty', 'discount', 'price_unit', 'price_per_unit', 'tax_id')
     def _compute_amount(self):
         """
